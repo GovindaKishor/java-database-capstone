@@ -246,10 +246,4 @@ db.system_logs.createIndex({ "created_at": 1 }, { expireAfterSeconds: 60*60*24*9
 
 ---
 
-## Next steps (suggested)
-
-1. Review regulatory requirements for storage of medical records in your jurisdiction (retention length, encryption at rest).
-2. Add `audit_logs` and `consent` tables/collections to capture consent for processing.
-3. If you want, I can generate a `schema-design.md` file ready to commit and provide the exact git commands to add it to your `java-database-capstone` repository.
-
 <!-- End of schema-design.md -->
