@@ -1,1 +1,1 @@
-
+This Spring Boot application combines both MVC and REST controllers. The Admin and Doctor dashboards are built using Thymeleaf templates, while the rest of the modules expose functionality through REST APIs. The system works with two databases: MySQL, which stores data about patients, doctors, appointments, and admins, and MongoDB, which stores prescription records. All incoming requests pass through a shared service layer, which then interacts with the correct repository. MySQL data is managed with JPA entities, whereas MongoDB uses document models.
