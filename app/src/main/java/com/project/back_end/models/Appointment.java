@@ -5,101 +5,58 @@ import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Transient;
 
-// Time and Date Imports
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.LocalDate;
-import java.time.Duration;
-
-// Validation Imports
+// Validation and Utility Imports
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Future;
-
-// NOTE: Minimal definitions for Doctor and Patient for compilation.
-// These should be replaced by their fully-featured files later.
-
-/**
- * Placeholder for the Doctor entity, required for the @ManyToOne relationship.
- */
-@Entity
-class Doctor {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
-    // Getters and Setters omitted for brevity in placeholder
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-}
+import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 
 /**
- * Placeholder for the Patient entity, required for the @ManyToOne relationship.
- */
-@Entity
-class Patient {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
-    // Getters and Setters omitted for brevity in placeholder
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-}
-
-/**
- * Represents a scheduled Appointment, linking a Patient and a Doctor.
- * This entity is mapped to a relational database table.
+ * Represents a scheduled appointment between a doctor and a patient.
+ * It is mapped to a relational database table.
  */
 @Entity
 public class Appointment {
 
-    // Assuming a standard appointment duration of 1 hour as requested
-    private static final Duration APPOINTMENT_DURATION = Duration.ofHours(1);
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Relationships
-    @NotNull(message = "Doctor must be assigned")
+    // Relationships: Assuming Doctor and Patient are in the same models package
     @ManyToOne
-    @JoinColumn(name = "doctor_id", nullable = false)
+    @NotNull(message = "Doctor is required for an appointment")
     private Doctor doctor;
 
-    @NotNull(message = "Patient must be assigned")
     @ManyToOne
-    @JoinColumn(name = "patient_id", nullable = false)
+    @NotNull(message = "Patient is required for an appointment")
     private Patient patient;
 
-    // Core Data Fields
     @NotNull(message = "Appointment time is required")
     @Future(message = "Appointment time must be in the future")
     private LocalDateTime appointmentTime;
 
-    @NotNull(message = "Status is required")
+    @NotNull(message = "Appointment status is required")
     private int status; // 0 for Scheduled, 1 for Completed
 
-    // --- Helper Methods (Transients) ---
+    // --- Helper Methods (Transient - not persisted) ---
 
     /**
-     * Returns the end time of the appointment (1 hour after start time).
-     * Marked @Transient to prevent persistence in the database.
+     * Calculates the end time of the appointment (assuming 1 hour duration).
+     * @return The calculated end time.
      */
     @Transient
     public LocalDateTime getEndTime() {
-        return this.appointmentTime.plus(APPOINTMENT_DURATION);
+        // Assuming a standard 1-hour appointment duration
+        return this.appointmentTime.plus(1, ChronoUnit.HOURS);
     }
 
     /**
-     * Returns only the date portion of the appointment.
-     * Marked @Transient to prevent persistence in the database.
+     * Extracts only the date portion of the appointment.
+     * @return The appointment date.
      */
     @Transient
     public LocalDate getAppointmentDate() {
@@ -107,13 +64,14 @@ public class Appointment {
     }
 
     /**
-     * Returns only the time portion of the appointment.
-     * Marked @Transient to prevent persistence in the database.
+     * Extracts only the time portion of the appointment.
+     * @return The appointment time.
      */
     @Transient
     public LocalTime getAppointmentTimeOnly() {
         return this.appointmentTime.toLocalTime();
     }
+
 
     // --- Getters and Setters ---
 
