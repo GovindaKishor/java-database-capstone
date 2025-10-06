@@ -1,58 +1,178 @@
-/*
-  Import the openModal function to handle showing login popups/modals
-  Import the base API URL from the config file
-  Define constants for the admin and doctor login API endpoints using the base URL
+// --- 1. Import Required Modules (Placeholders) ---
+// NOTE: These imports assume configuration and modal functions are set up in sibling folders.
+// import { openModal } from '../components/modals.js';
+// import { API_BASE_URL } from '../config/config.js';
 
-  Use the window.onload event to ensure DOM elements are available after page load
-  Inside this function:
-    - Select the "adminLogin" and "doctorLogin" buttons using getElementById
-    - If the admin login button exists:
-        - Add a click event listener that calls openModal('adminLogin') to show the admin login modal
-    - If the doctor login button exists:
-        - Add a click event listener that calls openModal('doctorLogin') to show the doctor login modal
+// Expose these as global functions for the modal forms to call them via onclick=""
+window.adminLoginHandler = adminLoginHandler;
+window.doctorLoginHandler = doctorLoginHandler;
 
-
-  Define a function named adminLoginHandler on the global window object
-  This function will be triggered when the admin submits their login credentials
-
-  Step 1: Get the entered username and password from the input fields
-  Step 2: Create an admin object with these credentials
-
-  Step 3: Use fetch() to send a POST request to the ADMIN_API endpoint
-    - Set method to POST
-    - Add headers with 'Content-Type: application/json'
-    - Convert the admin object to JSON and send in the body
-
-  Step 4: If the response is successful:
-    - Parse the JSON response to get the token
-    - Store the token in localStorage
-    - Call selectRole('admin') to proceed with admin-specific behavior
-
-  Step 5: If login fails or credentials are invalid:
-    - Show an alert with an error message
-
-  Step 6: Wrap everything in a try-catch to handle network or server errors
-    - Show a generic error message if something goes wrong
+// Mock imports for immediate functionality checks
+const API_BASE_URL = 'http://localhost:8080/api';
+// Assuming openModal is defined elsewhere or globally exposed.
+// We'll define a simple placeholder to prevent errors.
+const openModal = (type) => { console.log(`Opening modal for: ${type}`); };
 
 
-  Define a function named doctorLoginHandler on the global window object
-  This function will be triggered when a doctor submits their login credentials
+// --- 2. Define API Endpoints ---
+const ADMIN_API = API_BASE_URL + '/admin/login'; // Changed from /admin to /admin/login for clarity
+const DOCTOR_API = API_BASE_URL + '/doctor/login';
 
-  Step 1: Get the entered email and password from the input fields
-  Step 2: Create a doctor object with these credentials
+/**
+ * Helper function to handle the API fetch operation with error handling.
+ * @param {string} url - The API endpoint URL.
+ * @param {object} data - The credentials object to send in the request body.
+ * @returns {Promise<object>} The JSON response body.
+ */
+async function fetchLogin(url, data) {
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
 
-  Step 3: Use fetch() to send a POST request to the DOCTOR_API endpoint
-    - Include headers and request body similar to admin login
+        const json = await response.json();
 
-  Step 4: If login is successful:
-    - Parse the JSON response to get the token
-    - Store the token in localStorage
-    - Call selectRole('doctor') to proceed with doctor-specific behavior
+        if (!response.ok) {
+            // Throw an error with the server's message if the response status is not 2xx
+            throw new Error(json.message || 'Invalid credentials or login failed.');
+        }
 
-  Step 5: If login fails:
-    - Show an alert for invalid credentials
+        return json;
+        
+    } catch (error) {
+        console.error("Login attempt error:", error.message);
+        // IMPORTANT: Use custom logging instead of alert()
+        alert("Login Failed: " + error.message); 
+        throw error; // Re-throw the error to be caught by the handler functions
+    }
+}
 
-  Step 6: Wrap in a try-catch block to handle errors gracefully
-    - Log the error to the console
-    - Show a generic error message
-*/
+// --- 3. Implement Admin Login Handler ---
+/**
+ * Handles the submission of the Admin login form.
+ * It authenticates the user and stores the token upon success.
+ */
+async function adminLoginHandler() {
+    // 1. Read input values from the modal form (assuming form IDs are standard)
+    const usernameInput = document.getElementById('adminUsername');
+    const passwordInput = document.getElementById('adminPassword');
+
+    const username = usernameInput ? usernameInput.value : '';
+    const password = passwordInput ? passwordInput.value : '';
+
+    if (!username || !password) {
+        alert("Please enter both username and password.");
+        return;
+    }
+
+    const admin = { username, password };
+
+    try {
+        const responseData = await fetchLogin(ADMIN_API, admin);
+
+        // 2. Handle Success
+        const token = responseData.token; // Assuming the API returns a token field
+        localStorage.setItem("token", token);
+        
+        // Assuming selectRole is available globally (defined in render.js)
+        if (typeof selectRole === 'function') {
+            selectRole("admin");
+        } else {
+            // If selectRole isn't loaded, set role and manually redirect
+            localStorage.setItem("userRole", "admin");
+            window.location.href = "/admin/adminDashboard.html";
+        }
+        
+    } catch (error) {
+        // Error already handled and logged in fetchLogin
+    }
+}
+
+
+// --- 4. Implement Doctor Login Handler ---
+/**
+ * Handles the submission of the Doctor login form.
+ * It authenticates the user and stores the token upon success.
+ */
+async function doctorLoginHandler() {
+    // 1. Read input values from the modal form (assuming form IDs are standard)
+    const emailInput = document.getElementById('doctorEmail');
+    const passwordInput = document.getElementById('doctorPassword');
+    
+    const email = emailInput ? emailInput.value : '';
+    const password = passwordInput ? passwordInput.value : '';
+    
+    if (!email || !password) {
+        alert("Please enter both email and password.");
+        return;
+    }
+
+    const doctor = { email, password };
+
+    try {
+        const responseData = await fetchLogin(DOCTOR_API, doctor);
+        
+        // 2. Handle Success
+        const token = responseData.token; // Assuming the API returns a token field
+        localStorage.setItem("token", token);
+        
+        // Assuming selectRole is available globally (defined in render.js)
+        if (typeof selectRole === 'function') {
+            selectRole("doctor");
+        } else {
+            // If selectRole isn't loaded, set role and manually redirect
+            localStorage.setItem("userRole", "doctor");
+            window.location.href = "/doctor/doctorDashboard.html";
+        }
+
+    } catch (error) {
+        // Error already handled and logged in fetchLogin
+    }
+}
+
+
+// --- 5. Setup Button Event Listeners ---
+/**
+ * Attaches event listeners to the role selection buttons on the index page
+ * to trigger the appropriate login modals.
+ */
+window.onload = function () {
+    const adminBtn = document.getElementById('adminLogin');
+    const doctorBtn = document.getElementById('doctorLogin');
+    const patientBtn = document.getElementById('patientLogin');
+
+    // Admin button opens the Admin login modal
+    if (adminBtn) {
+        adminBtn.addEventListener('click', () => {
+            openModal('adminLogin');
+            // Prevent selectRole('admin') from running if it's set inline, 
+            // though the better fix is removing inline onclick=""
+            if (adminBtn.getAttribute('onclick')) {
+                adminBtn.removeAttribute('onclick');
+            }
+        });
+    }
+    
+    // Doctor button opens the Doctor login modal
+    if (doctorBtn) {
+        doctorBtn.addEventListener('click', () => {
+            openModal('doctorLogin');
+            if (doctorBtn.getAttribute('onclick')) {
+                doctorBtn.removeAttribute('onclick');
+            }
+        });
+    }
+
+    // Patient button opens the Patient selection modal (login/signup)
+    // We can assume 'patient' role selection opens a general auth modal
+    if (patientBtn) {
+        patientBtn.addEventListener('click', () => {
+            openModal('patientAuth');
+            if (patientBtn.getAttribute('onclick')) {
+                patientBtn.removeAttribute('onclick');
+            }
+        });
+    }
+};
