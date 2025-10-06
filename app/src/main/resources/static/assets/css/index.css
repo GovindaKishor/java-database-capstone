@@ -1,53 +1,196 @@
-/* this is the style sheet file for index.htlm  */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;700&display=swap');
 
-/* 
-**Global Reset (`*`)**
+/* 1. Global Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-* Remove all default margin and padding.
-* Use `border-box` for sizing to include padding and border in element size.
+/* 2. HTML and Body Styling (Using Roboto as requested) */
+html, body {
+    height: 100%;
+    font-family: 'Roboto', sans-serif;
+    color: #333;
+    line-height: 1.6;
+}
 
-**Base (`html, body`)**
+/* 7. Header and Footer Placeholder Styles (Basic Flex Layout) */
+#header, #footer {
+    display: flex;
+    padding: 1rem 2rem;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #ffffff;
+    border-bottom: 1px solid #eee;
+}
 
-* Set height to 100% for full viewport layout.
-* Use the `'Roboto'` sans-serif font for modern, clean typography.
+#footer {
+    border-top: 1px solid #eee;
+    border-bottom: none;
+    font-size: 0.875rem;
+    color: #666;
+    justify-content: center;
+}
 
-**Layout Wrapper (`.wrapper`)**
+/* Mobile responsive layout for header */
+@media (max-width: 640px) {
+    #header {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
 
-* Use a vertical flexbox layout.
-* Ensure the wrapper covers at least the full height of the screen (`min-height: 100vh`).
+/* 4. Main Content Area Styling */
+.main-content {
+    /* Placeholder for a generic background image */
+    background-image: url('https://placehold.co/1920x1080/E0F2F1/14B8A6?text=Clinic%20Background');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* Fixed background that doesn’t scroll */
+    display: flex;
+    align-items: center; /* Centering content vertically */
+    justify-content: center; /* Centering content horizontally */
+    min-height: 100vh; /* Ensures it covers the full viewport height */
+    padding: 2rem;
+}
 
-**Heading (`h2`)**
+/* 3. Main Wrapper Styling */
+.wrapper {
+    display: flex;
+    flex-direction: column; /* Ensures content inside is stacked vertically */
+    gap: 1.5rem;
+    padding: 3rem;
+    background-color: rgba(255, 255, 255, 0.95); /* Slightly transparent white for content readability */
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 450px; /* Constrain width for better focus */
+}
 
-* Set a large font size (`48px`) for prominence.
-* Add a bottom margin of `50px` for spacing.
-* Use a dark teal color (`#003e3e`).
-* Make the font bold and use a blended font stack (`'Alegreya', 'Roboto', sans-serif`) for elegant styling.
+/* 5. Heading (h2) and Button Base Styles */
+h2 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: #1a202c; /* Dark text color */
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
 
-**Main Section (`.main-content`)**
+button {
+    cursor: pointer;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
 
-* Allow the section to grow to fill space with `flex-grow: 1`.
-* Add `40px` of internal padding.
-* Center content both horizontally and vertically using `justify-content` and `align-items`.
-* Display items in a column direction.
-* Center all text.
-* Apply a full-screen background image with:
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 
-  * `cover` size
-  * `center` positioning
-  * no repeat
-  * `fixed` attachment to keep image still during scroll
+button:active {
+    transform: translateY(0);
+}
 
-**Buttons (`button`)**
+/* 6. Modal and Button Interaction Styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0; /* Managed by JS for animation */
+    transition: opacity 0.3s ease;
+}
 
-* Style with a teal green background (`#015c5d`) and white text.
-* Remove borders and round the corners (`12px`).
-* Use `10px 20px` padding and set width to `200px`.
-* Add a top margin of `10px` for spacing.
-* Enable pointer cursor and readable font size (`16px`).
-* On hover, change background color to bold red (`#A62B1F`).
+.modal-content {
+    max-width: 90%;
+    transform: scale(0.95); /* Managed by JS for animation */
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
 
-**Dashboard Buttons (`.dashboard-btn`)**
+.close {
+    font-size: 2.5rem;
+    font-weight: 300;
+    line-height: 1;
+    color: #9ca3af;
+    cursor: pointer;
+}
 
-* Use the same base green background (`#015c5d`) as the default button.
-* On hover, darken the background to deep teal (`#003e3e`) for visual feedback.
- */
+.close:hover {
+    color: #6b7280;
+}
+
+/* 8. Specific Interactive Styles */
+
+/* Dashboard Button (Example) */
+.dashboard-btn {
+    background-color: #3b82f6; /* Blue */
+    color: white;
+}
+.dashboard-btn:hover {
+    background-color: #2563eb;
+}
+
+/* Input Fields */
+.input-field {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-field:focus {
+    border-color: #059669; /* Emerald 600 */
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.3);
+}
+
+/* Select Dropdown */
+.select-dropdown {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
+    background-color: white;
+    appearance: none; /* Remove default browser styling */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236B7280'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1.5em 1.5em;
+    cursor: pointer;
+}
+
+/* Checkbox Group */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    appearance: none;
+    cursor: pointer;
+}
+
+.checkbox-group input[type="checkbox"]:checked {
+    background-color: #059669;
+    border-color: #059669;
+}

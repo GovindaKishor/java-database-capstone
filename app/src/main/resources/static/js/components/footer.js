@@ -1,104 +1,77 @@
-/*
-  Function to render the footer content into the page
-      Select the footer element from the DOM
-      Set the inner HTML of the footer element to include the footer content
-  This section dynamically generates the footer content for the web page, including the hospital's logo, copyright information, and various helpful links.
+/**
+ * Renders the static footer content into the placeholder div.
+ * The footer remains consistent across all application pages.
+ */
+function renderFooter() {
+    // 1. Access the Footer Container
+    const footer = document.getElementById("footer");
 
-  1. Insert Footer HTML Content
+    // Exit if the footer placeholder is not found
+    if (!footer) {
+        return;
+    }
 
-     * The content is inserted into the `footer` element with the ID "footer" using `footer.innerHTML`.
-     * This is done dynamically via JavaScript to ensure that the footer is properly rendered across different pages.
+    // Get the current year for copyright information
+    const currentYear = new Date().getFullYear();
 
-  2. Create the Footer Wrapper
+    // 2. Inject HTML Content (using a template literal for multi-line HTML)
+    footer.innerHTML = `
+        <footer class="footer p-8 bg-gray-900 text-white mt-12">
+            <div class="footer-grid max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
+                
+                <!-- Branding and Copyright Section -->
+                <div class="footer-logo col-span-2 md:col-span-1 flex flex-col items-start space-y-3">
+                    <div class="flex items-center space-x-2">
+                        <!-- Placeholder for Logo image -->
+                        <img src="/assets/images/logo.png" alt="Smart Clinic Logo" class="w-8 h-8 rounded-full">
+                        <h4 class="text-xl font-bold text-blue-400">Smart Clinic</h4>
+                    </div>
+                    <p class="text-sm text-gray-400 mt-2">
+                        &copy; Copyright ${currentYear} Smart Clinic. All rights reserved.
+                    </p>
+                    <p class="text-xs text-gray-500">
+                        Integrated Health Management System.
+                    </p>
+                </div>
 
-     * The `<footer>` tag with class `footer` wraps the entire footer content, ensuring that it is styled appropriately.
-       ```html
-       <footer class="footer">
-       ```
+                <!-- Column 1: Company Links -->
+                <div class="footer-column">
+                    <h5 class="text-lg font-semibold mb-4 text-blue-300">Company</h5>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-blue-200 transition duration-150">About Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-blue-200 transition duration-150">Careers</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-blue-200 transition duration-150">Press & Media</a></li>
+                    </ul>
+                </div>
 
-  3. Create the Footer Container
+                <!-- Column 2: Support Links -->
+                <div class="footer-column">
+                    <h5 class="text-lg font-semibold mb-4 text-blue-300">Support</h5>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-blue-200 transition duration-150">My Account</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-blue-200 transition duration-150">Help Center</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-blue-200 transition duration-150">Contact Us</a></li>
+                    </ul>
+                </div>
 
-     * Inside the footer, a container div with the class `footer-container` holds the content to maintain proper alignment and spacing.
-       ```html
-       <div class="footer-container">
-       ```
+                <!-- Column 3: Legal Links -->
+                <div class="footer-column">
+                    <h5 class="text-lg font-semibold mb-4 text-blue-300">Legal</h5>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-blue-200 transition duration-150">Terms of Service</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-blue-200 transition duration-150">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-blue-200 transition duration-150">Licensing</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="text-center pt-8 border-t border-gray-700 mt-8">
+                <p class="text-sm text-gray-500">
+                    Disclaimer: This is a sample application for educational purposes.
+                </p>
+            </div>
+        </footer>
+    `;
+}
 
-  4. Add the Hospital Logo and Copyright Info
-
-     * A `footer-logo` div contains the hospital's logo (an image element) and the copyright information.
-       - The `<img>` tag displays the logo, with an `alt` attribute for accessibility.
-       - The copyright text is displayed in a paragraph element.
-       ```html
-       <div class="footer-logo">
-         <img src="../assets/images/logo/logo.png" alt="Hospital CMS Logo">
-         <p>© Copyright 2025. All Rights Reserved by Hospital CMS.</p>
-       </div>
-       ```
-
-  5. Create the Links Section
-
-     * A `footer-links` div contains all the links grouped into three sections: Company, Support, and Legals.
-     * This structure helps to organize the footer content and makes it easier for users to find related links.
-
-  6. Add the 'Company' Links Column
-
-     * Inside the `footer-links` div, the first column represents company-related links.
-       - The section includes a header (`<h4>Company</h4>`) followed by links for "About", "Careers", and "Press".
-       ```html
-       <div class="footer-column">
-         <h4>Company</h4>
-         <a href="#">About</a>
-         <a href="#">Careers</a>
-         <a href="#">Press</a>
-       </div>
-       ```
-
-  7. Add the 'Support' Links Column
-
-     * The second column is dedicated to support-related links.
-       - It includes a header (`<h4>Support</h4>`) followed by links for "Account", "Help Center", and "Contact Us".
-       ```html
-       <div class="footer-column">
-         <h4>Support</h4>
-         <a href="#">Account</a>
-         <a href="#">Help Center</a>
-         <a href="#">Contact Us</a>
-       </div>
-       ```
-
-  8. Add the 'Legals' Links Column
-
-     * The third column contains legal-related links, such as "Terms & Conditions", "Privacy Policy", and "Licensing".
-       - The header (`<h4>Legals</h4>`) is followed by these links.
-       ```html
-       <div class="footer-column">
-         <h4>Legals</h4>
-         <a href="#">Terms & Conditions</a>
-         <a href="#">Privacy Policy</a>
-         <a href="#">Licensing</a>
-       </div>
-       ```
-
-  9. Close the Footer Container
-
-     * Close the `footer-container` div to ensure proper structure.
-       ```html
-       </div> <!-- End of footer-container -->
-       ```
-
-  10. Close the Footer Element
-
-     * Finally, close the `<footer>` tag to complete the footer section.
-       ```html
-       </footer>
-       ```
-
-  11. Footer Rendering Complete
-
-     * The `footer.innerHTML` code completes the dynamic rendering of the footer by injecting the structured HTML content into the `footer` element on the page.
-
-
-
-  Call the renderFooter function to populate the footer in the page
-
-*/
+// 3. Call the Function immediately when the script loads
+renderFooter();

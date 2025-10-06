@@ -1,104 +1,158 @@
-<!-- index.html -->
-<!-- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Clinic | Select Your Role</title>
+    <!-- Favicon Placeholder -->
+    <link rel="icon" href="./assets/favicon.ico" type="image/x-icon">
 
-Step-by-Step Explanation of `index.html`.
-This file allows users to select a role (Admin, Patient, Doctor) 
-and triggers modal-based login functionality.
+    <!-- Tailwind CSS CDN for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-1. Label the File
+    <!-- Custom CSS Links (as requested) -->
+    <link rel="stylesheet" href="./assets/css/index.css">
+    <link rel="stylesheet" href="./assets/css/style.css">
 
-   * Add a comment at the very top to identify the file as `index.html`. This helps developers stay organized.
+    <!-- Custom Tailwind Configuration -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        
+        :root {
+            --color-primary: #10B981; /* Emerald 500 */
+            --color-secondary: #059669; /* Emerald 600 */
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+            min-height: 100vh;
+        }
+        .role-button {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+        .role-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3), 0 4px 6px -4px rgba(16, 185, 129, 0.3);
+        }
+        .modal {
+            display: none; /* Controlled by JS */
+        }
+    </style>
 
-2. Declare Document Type
+    <!-- JS Utility Links (as requested) -->
+    <script src="./js/util.js" defer></script>
+    <script src="./js/render.js" defer></script>
 
-   * Use the declaration for HTML5 so browsers know how to render the page correctly.
+    <!-- JS Component Links (as requested) -->
+    <script src="./js/components/header.js" defer></script>
+    <script src="./js/components/footer.js" defer></script>
+</head>
+<body>
+    <!-- Header Placeholder -->
+    <div id="header"></div>
 
-3. Start the HTML Document
+    <main class="main-content flex items-center justify-center min-h-[calc(100vh-100px)] p-4">
+        <div class="container mx-auto max-w-4xl">
+            <div class="wrapper bg-white p-8 md:p-12 rounded-xl shadow-2xl border border-gray-100">
+                <h2 class="text-4xl font-extrabold text-gray-800 mb-8 text-center">
+                    Select Your Role
+                </h2>
 
-   * Begin the HTML structure and set the document language to English to improve accessibility and SEO `lang="en"`.
+                <div id="role-selection-buttons" class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <!-- Admin Button -->
+                    <button id="btnAdmin"
+                            class="role-button bg-blue-600 text-white p-6 rounded-lg text-xl font-semibold hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transform active:scale-95"
+                            onclick="selectRole('Admin')">
+                        Admin
+                    </button>
 
-4. Head Section (Metadata and Resources)
+                    <!-- Doctor Button -->
+                    <button id="btnDoctor"
+                            class="role-button bg-emerald-500 text-white p-6 rounded-lg text-xl font-semibold hover:bg-emerald-600 focus:outline-none focus:ring-4 focus:ring-emerald-300 transform active:scale-95"
+                            onclick="selectRole('Doctor')">
+                        Doctor
+                    </button>
 
-   * Open the `<head>` section which contains settings and links that don’t show up visually.
+                    <!-- Patient Button -->
+                    <button id="btnPatient"
+                            class="role-button bg-yellow-500 text-white p-6 rounded-lg text-xl font-semibold hover:bg-yellow-600 focus:outline-none focus:ring-4 focus:ring-yellow-300 transform active:scale-95"
+                            onclick="selectRole('Patient')">
+                        Patient
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
 
-5. Set Character Encoding
+    <!-- Hidden Modal Structure -->
+    <div id="modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white p-6 rounded-xl shadow-2xl w-full max-w-md transform transition-transform duration-300 scale-95 opacity-0" id="modal-content">
+            <div class="flex justify-between items-start mb-4">
+                <h3 class="text-2xl font-bold text-gray-800">Login</h3>
+                <button id="closeModal" class="text-gray-400 hover:text-gray-700 text-3xl leading-none">
+                    &times;
+                </button>
+            </div>
+            <div id="modal-body" class="text-gray-600">
+                <!-- Dynamic login form or content will be injected here -->
+                <p>Please log in as <span id="selected-role-display" class="font-semibold text-emerald-600"></span>.</p>
+            </div>
+        </div>
+    </div>
 
-   * Specify UTF-8 encoding to support most global characters and symbols.
+    <!-- Footer Placeholder -->
+    <div id="footer"></div>
 
-6. Set the Page Title
+    <!-- Minimal inline script to satisfy immediate function requirement -->
+    <script>
+        /**
+         * Selects the role, stores it in localStorage, and shows the login modal.
+         * @param {string} role - The selected role (Admin, Doctor, Patient).
+         */
+        function selectRole(role) {
+            console.log("Role selected: " + role);
+            localStorage.setItem('userRole', role);
 
-   * Give the page a name (e.g., "Select Role") that appears on the browser tab.
+            // Update modal content and show it
+            const modal = document.getElementById('modal');
+            const modalContent = document.getElementById('modal-content');
+            const roleDisplay = document.getElementById('selected-role-display');
 
-7. Add a Favicon
+            if (roleDisplay) {
+                roleDisplay.textContent = role;
+            }
 
-   * Link to an icon (like a logo) that will appear in the browser tab from the address `href="../assets/images/logo/Logo.png"`
+            if (modal && modalContent) {
+                // Show modal with animation
+                modal.style.display = 'flex';
+                setTimeout(() => {
+                    modal.style.opacity = '1';
+                    modalContent.style.transform = 'scale(1)';
+                    modalContent.style.opacity = '1';
+                }, 10); // slight delay for transition effect
+            }
+        }
+        
+        // Modal close functionality
+        document.getElementById('closeModal')?.addEventListener('click', () => {
+            const modal = document.getElementById('modal');
+            const modalContent = document.getElementById('modal-content');
 
-8. Link Stylesheets
+            if (modal && modalContent) {
+                 // Hide modal with animation
+                modal.style.opacity = '0';
+                modalContent.style.transform = 'scale(0.95)';
+                modalContent.style.opacity = '0';
+                
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                }, 300); // Wait for transition to finish
+            }
+        });
+    </script>
 
-   * Add a page-specific stylesheet for layout and design.
-   * Also include a global stylesheet for shared site-wide styles.
-
-   HINT:
-      `<link rel="stylesheet" href="../assets/css/index.css">`
-      `<link rel="stylesheet" href="../assets/css/style.css">`
-
-9. Add JavaScript Files with `defer`
-
-   * Link utility and rendering JavaScript files (e.g., `util.js`, `render.js`).
-   * Include scripts for rendering components like header and footer.
-   * Use the `defer` attribute so they load after the HTML is parsed.
-
-   HINT:
-      `<script src="../js/util.js" defer></script>`
-      `<script src="../js/render.js" defer></script>`
-      `<script src="../js/components/header.js" defer></script>`
-      `<script src="../js/components/footer.js" defer></script>`
-      
-10. Close the Head and Open the Body
-
-    * Wrap up metadata and begin the visible page content.
-
-11. Create a Container
-
-    * Add a main container to hold all page elements and apply layout constraints.
-
-12. Use a Wrapper for Structure
-
-    * Inside the container, add a wrapper to group header, main, and footer sections logically.
-
-13. Insert a Header Placeholder
-
-    * Add a `div` that will be dynamically filled by JavaScript with the site’s header.
-
-14. Define the Main Section
-
-    * Use a semantic `<main>` tag to hold the central content of the page.
-
-15. Add a Heading for Role Selection
-
-    * Display a heading like “Select Your Role” to instruct users.
-
-16. Add Buttons for Roles
-
-    * Create buttons for each role: Admin, Patient, and Doctor.
-    * Assign unique identifiers or `onclick` handlers to them as needed.
-
-17. Insert a Footer Placeholder
-
-    * Add a `div` that will be dynamically filled by JavaScript with the site’s footer.
-
-18. Create a Modal Structure
-
-    * Add a modal overlay for popups (like login forms).
-    * Include a close button and an inner container for dynamic content.
-
-19. Load Page-Specific Logic Module
-
-    * Use a `<script type="module">` tag to load the role selection logic (e.g., `index.js`).
-    * Ensure it’s deferred so it doesn’t block HTML rendering.
-
-20. Close the Body and HTML Tags
-
-    * Properly close all opened tags to complete the document structure.
-
- -->
+    <!-- Main JS service link (as requested) -->
+    <script type="module" src="./js/services/index.js" defer></script>
+</body>
+</html>
