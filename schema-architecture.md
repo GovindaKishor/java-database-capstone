@@ -3,7 +3,7 @@
 ## **Section 1: Architecture Summary**
 
 The Smart Clinic System is built on a **three-tier microservice architecture** using **Java Spring Boot** as the backend framework.  
-This architecture separates concerns into distinct layers **Presentation**, **Application**, and **Data Persistence** — ensuring scalability, maintainability, and strong security.  
+This architecture separates concerns into distinct layers **Presentation**, **Application**, and **Data Persistence** ensuring scalability, maintainability, and strong security.  
 The frontend (HTML/CSS/JavaScript) communicates with the backend only through **secure RESTful APIs**, while the backend handles all business logic, authentication, and data access.  
 Data is managed using a **polyglot persistence** strategy: **MySQL** stores structured relational data such as users and appointments, while **MongoDB** handles flexible document data such as prescriptions and medical histories.
 
