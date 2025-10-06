@@ -50,6 +50,3 @@ from the user interface, through the backend layers, and finally to the database
    - Rendered **HTML pages** via Thymeleaf for server-side views, or  
    - **JSON responses** for REST API clients.
 
----
-
-**End of File**
