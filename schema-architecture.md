@@ -1,58 +1,55 @@
-# **Schema Architecture**
+## **Architecture Summary**
 
-## **Section 1: Architecture Summary**
+This Spring Boot application employs a **three-tier architecture** with a hybrid controller approach.  
+**Thymeleaf Controllers** render traditional, server-side HTML pages for the core **Admin** and **Doctor Dashboards**, ensuring a rich, integrated user experience for staff.  
+All other functional modules such as **Appointment Management** and **Patient Records** are served by **REST Controllers**, which expose **JSON-based APIs** suitable for scalable client applications (like a potential mobile app).  
 
-The Smart Clinic System is built on a **three-tier microservice architecture** using **Java Spring Boot** as the backend framework.  
-This architecture separates concerns into distinct layers **Presentation**, **Application**, and **Data Persistence** ensuring scalability, maintainability, and strong security.  
-The frontend (HTML/CSS/JavaScript) communicates with the backend only through **secure RESTful APIs**, while the backend handles all business logic, authentication, and data access.  
-Data is managed using a **polyglot persistence** strategy: **MySQL** stores structured relational data such as users and appointments, while **MongoDB** handles flexible document data such as prescriptions and medical histories.
+All controllers route their requests through a centralized **Service Layer**, which enforces **business rules**, **data validations**, and **transaction consistency**.  
+The application uses **polyglot persistence**, integrating:
+- **MySQL (via JPA)** for structured data such as Patients, Doctors, and Appointments.
+- **MongoDB** for flexible, document-based data such as Prescriptions.
 
----
-
-## **Section 2: Numbered Flow**
-
-### **1. Request Initiation (Presentation Layer)**
-A **Doctor** fills out a prescription form on the **JavaScript frontend**.  
-The frontend sends an **HTTP POST** request containing the prescription data and the Doctor’s **JWT token** to the backend endpoint `/api/prescriptions`.
+This design ensures **separation of concerns**, **scalability**, **maintainability**, and **data integrity** across the system.
 
 ---
 
-### **2. Security Interception (Application Layer - Filter)**
-The **Spring Boot security filter chain** intercepts the incoming request.  
-It validates the **JWT token** for authenticity and expiration, extracts the user role, and verifies the **Doctor’s authorization** to perform this action.
+## **Section 2: Numbered Flow of Data and Control**
+
+Below is a step-by-step description of how a request flows through the Smart Clinic application  
+from the user interface, through the backend layers, and finally to the databases.
+
+1. **User Interface Layer:**  
+   Users interact with the system via either **Thymeleaf-rendered Dashboards** (for Admin and Doctor roles) or through **REST API clients** (for Appointments, Patient Records, etc.).
+
+2. **Controller Layer:**  
+   Requests are directed to the appropriate controller:
+   - **Thymeleaf Controllers** handle **server-side page rendering**.  
+   - **REST Controllers** process **API calls** and return structured **JSON responses**.
+
+3. **Service Layer:**  
+   Both controller types delegate to the **Service Layer**, which contains the **core business logic**.  
+   This layer performs **validations**, manages **transactions**, and coordinates data operations across multiple repositories.
+
+4. **Repository Layer:**  
+   The Service Layer interacts with the **Repository Layer**, using:
+   - **MySQL Repositories (via Spring Data JPA)** for **relational entities**, and  
+   - **MongoDB Repositories** for **document-based entities**.
+
+5. **Database Access:**  
+   The repository classes execute database operations on the respective data sources:
+   - **MySQL** for structured tables like **Patient**, **Doctor**, **Appointment**, and **Admin**.  
+   - **MongoDB** for dynamic collections like **Prescription**.
+
+6. **Model Binding:**  
+   Retrieved data is mapped into **Java domain models**  
+   - **JPA Entities** for MySQL, and  
+   - **Document Objects** for MongoDB.
+
+7. **Response Delivery:**  
+   The **Controller Layer** assembles the processed data into the final output:  
+   - Rendered **HTML pages** via Thymeleaf for server-side views, or  
+   - **JSON responses** for REST API clients.
 
 ---
 
-### **3. Controller Delegation (Application Layer - Controller)**
-Once validated, the request reaches the **`PrescriptionController`**.  
-The controller parses the incoming data and forwards it to the **Service Layer** for business logic execution.
-
----
-
-### **4. Business Logic (Application Layer - Service)**
-The **`PrescriptionService`** checks the validity of entities (e.g., patient and doctor IDs) and constructs a document structure ready for database insertion.
-
----
-
-### **5. Data Persistence (Application Layer - Repository)**
-The **Service Layer** uses **Spring Data MongoDB Repository (`PrescriptionRepository`)** to perform the database write operation.
-
----
-
-### **6. Data Write (Data Layer - MongoDB)**
-The repository inserts the **new prescription document** into the **MongoDB** database.
-
----
-
-### **7. Response Construction (Application Layer)**
-After a successful write, the **Service Layer** returns the newly created record to the **Controller**,  
-which sends back an **HTTP 201 (Created)** response.
-
----
-
-### **8. Response Delivery (Presentation Layer)**
-The **frontend** receives the success response.  
-It displays a confirmation notification and updates the doctor’s interface with the new prescription entry.
-
----
-
+**End of File**
