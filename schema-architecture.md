@@ -1,15 +1,58 @@
-This Spring Boot application combines both MVC and REST controllers. The Admin and Doctor dashboards are built using Thymeleaf templates, while the rest of the modules expose functionality through REST APIs. The system works with two databases: MySQL, which stores data about patients, doctors, appointments, and admins, and MongoDB, which stores prescription records. All incoming requests pass through a shared service layer, which then interacts with the correct repository. MySQL data is managed with JPA entities, whereas MongoDB uses document models.
+# **Schema Architecture**
 
-1. Dashboards and REST modules – The Admin and Doctor dashboards interact through Thymeleaf, while modules like Appointments, Patient Dashboard, and Patient Records use REST APIs (JSON) to communicate with the backend.
+## **Section 1: Architecture Summary**
 
-2. Controllers – Dashboard requests go through Thymeleaf controllers, and API calls go through REST controllers.
+The Smart Clinic System is built on a **three-tier microservice architecture** using **Java Spring Boot** as the backend framework.  
+This architecture separates concerns into distinct layers **Presentation**, **Application**, and **Data Persistence** — ensuring scalability, maintainability, and strong security.  
+The frontend (HTML/CSS/JavaScript) communicates with the backend only through **secure RESTful APIs**, while the backend handles all business logic, authentication, and data access.  
+Data is managed using a **polyglot persistence** strategy: **MySQL** stores structured relational data such as users and appointments, while **MongoDB** handles flexible document data such as prescriptions and medical histories.
 
-3. Service layer – Both types of controllers forward requests to a common service layer, which centralizes business logic.
+---
 
-4. Repository layer – The service layer communicates with either MySQL repositories or the MongoDB repository, depending on the type of data needed.
+## **Section 2: Numbered Flow**
 
-5. Databases – These repositories handle persistence by accessing the corresponding databases: MySQL for patient, doctor, appointment, and admin data, and MongoDB for prescriptions.
+### **1. Request Initiation (Presentation Layer)**
+A **Doctor** fills out a prescription form on the **JavaScript frontend**.  
+The frontend sends an **HTTP POST** request containing the prescription data and the Doctor’s **JWT token** to the backend endpoint `/api/prescriptions`.
 
-6. Models – Each database interaction uses appropriate models: JPA entities for MySQL tables, and document models for MongoDB collections.
+---
 
-7. Data mapping – The entities and documents (e.g., Patient, Doctor, Appointment, Admin, Prescription) represent the structured data models that are returned to the repositories, passed back through the service layer, and eventually delivered to the controllers and dashboards/APIs.
+### **2. Security Interception (Application Layer - Filter)**
+The **Spring Boot security filter chain** intercepts the incoming request.  
+It validates the **JWT token** for authenticity and expiration, extracts the user role, and verifies the **Doctor’s authorization** to perform this action.
+
+---
+
+### **3. Controller Delegation (Application Layer - Controller)**
+Once validated, the request reaches the **`PrescriptionController`**.  
+The controller parses the incoming data and forwards it to the **Service Layer** for business logic execution.
+
+---
+
+### **4. Business Logic (Application Layer - Service)**
+The **`PrescriptionService`** checks the validity of entities (e.g., patient and doctor IDs) and constructs a document structure ready for database insertion.
+
+---
+
+### **5. Data Persistence (Application Layer - Repository)**
+The **Service Layer** uses **Spring Data MongoDB Repository (`PrescriptionRepository`)** to perform the database write operation.
+
+---
+
+### **6. Data Write (Data Layer - MongoDB)**
+The repository inserts the **new prescription document** into the **MongoDB** database.
+
+---
+
+### **7. Response Construction (Application Layer)**
+After a successful write, the **Service Layer** returns the newly created record to the **Controller**,  
+which sends back an **HTTP 201 (Created)** response.
+
+---
+
+### **8. Response Delivery (Presentation Layer)**
+The **frontend** receives the success response.  
+It displays a confirmation notification and updates the doctor’s interface with the new prescription entry.
+
+---
+
