@@ -2,7 +2,7 @@ version: "3.8"
 services:
   app:
     build:
-      context: .
+      context: ../..
     ports:
       - "8080:8080"
     depends_on:
