@@ -1,30 +1,51 @@
 package com.project.back_end.DTO;
 
+/**
+ * Data Transfer Object (DTO) used to receive login credentials from the client.
+ * This class abstracts the authentication input for different user types (Admin, Doctor, Patient).
+ */
 public class Login {
+
+    // The unique identifier for the user (e.g., email for doctor/patient, username for admin)
+    private String identifier;
     
-// 1. 'email' field:
-//    - Type: private String
-//    - Description:
-//      - Represents the email address used for logging into the system.
-//      - The email field is expected to contain a valid email address for user authentication purposes.
+    // The password provided by the user
+    private String password;
 
-// 2. 'password' field:
-//    - Type: private String
-//    - Description:
-//      - Represents the password associated with the email address.
-//      - The password field is used for verifying the user's identity during login.
-//      - It is generally hashed before being stored and compared during authentication.
+    /**
+     * Default constructor required for framework deserialization.
+     */
+    public Login() {
+    }
 
-// 3. Constructor:
-//    - No explicit constructor is defined for this class, as it relies on the default constructor provided by Java.
-//    - This class can be initialized with setters or directly via reflection, as per the application's needs.
+    /**
+     * Constructor for creating a Login DTO instance.
+     *
+     * @param identifier The user's unique identifier.
+     * @param password The user's password.
+     */
+    public Login(String identifier, String password) {
+        this.identifier = identifier;
+        this.password = password;
+    }
 
-// 4. Getters and Setters:
-//    - Standard getter and setter methods are provided for both 'email' and 'password' fields.
-//    - The 'getEmail()' method allows access to the email value.
-//    - The 'setEmail(String email)' method sets the email value.
-//    - The 'getPassword()' method allows access to the password value.
-//    - The 'setPassword(String password)' method sets the password value.
+    // --- Getter Methods ---
 
+    public String getIdentifier() {
+        return identifier;
+    }
 
+    public String getPassword() {
+        return password;
+    }
+
+    // --- Setter Methods ---
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
